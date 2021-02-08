@@ -1,0 +1,22 @@
+<!-- resources/views/checkout.edge [Delete this line] -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdonisJS - Stripe</title>
+  </head>
+  <body>
+    @if(sessionId)
+      <script src="https://js.stripe.com/v3/"></script>
+      <script type="text/javascript">
+        var stripe = Stripe('{{ keyPublishable }}');
+        stripe.redirectToCheckout({
+          sessionId: '{{ sessionId }}'
+        }).then(function (result) {
+          console.log(result)
+        });
+      </script>
+    @endif
+  </body>
+</html>

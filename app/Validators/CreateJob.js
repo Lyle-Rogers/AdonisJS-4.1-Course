@@ -10,7 +10,7 @@ class CreateJob {
 
   get messages() {
     return {
-      'required': 'Hold on, stop and drop what your doing, and think for a bit. What if your mom died... Huh? What would you do then... Huh? Well then stop doing stupid shit and give me a {{ feild }} or she just might!'
+      'required': 'Hold on, stop and drop what your doing, and think for a bit. What if your mom died... Huh? What would you do then... Huh? Well then stop doing stupid shit and give me a {{ field }} or she just might!'
     }
   }
 

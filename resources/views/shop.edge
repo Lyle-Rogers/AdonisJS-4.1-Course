@@ -1,0 +1,78 @@
+<!-- resources/views/index.edge [Delete this line] -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdonisJS - Stripe</title>
+    {{ style('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css') }}
+    {{ style('https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css') }}
+    <style>
+      .book-title,
+      .book-author,
+      .book-description {
+        text-align: center;
+      }
+      .book-image {
+        width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Begin : Nabvar -->
+    <nav class="navbar navbar-dark bg-dark">
+      <a class="navbar-brand" href="{{ route('book.index') }}">
+        <img src="/logo.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+        The Book Store
+      </a>
+    </nav>
+    <!-- End : Nabvar -->
+    <!-- Begin : Container -->
+    <div class="container pt-3">
+      <div class="row justify-content-center">
+        <div class="col-md-7">
+          <!-- Begin : Notification -->
+          @if(flashMessage('notification_message'))
+            <div class="alert {{ flashMessage('notification_class') }}" role="alert">
+              <i class="fa {{ flashMessage('notification_icon') }}"></i> {{ flashMessage('notification_message') }}
+            </div>
+          @endif
+          <!-- End : Notification -->
+          <!-- Begin : Card - Book -->
+          <div class="card flex-md-row mb-4 shadow-sm h-md-250 bg-light">
+            <div class="card-body d-flex flex-column">
+              <strong class="book-title d-inline-block mb-3 text-primary">{{ book.sku }} - {{ book.title }}</strong>
+              <div class="book-author text-muted small pb-4">By {{ book.author }}</div>
+              <p class="book-description mb-auto alig-center">{{ book.description }}</p>
+              @if(sessionId)
+                <!-- Begin : Button - Download -->
+                <a href="{{ route('book.download') }}?sessionId={{sessionId}}" class="btn btn-outline-success" role="button">
+                  <i class="fa fa-cloud-download"></i> Download PDF
+                </a>
+                <!-- End : Button - Download -->
+              @else
+                <!-- Begin : Button - Buy -->
+                <a href="{{ route('book.pay') }}" class="btn btn-outline-primary mt-3" role="button">
+                  <i class="fa fa-credit-card"></i> Buy for only ${{ book.price }} {{ book.currency }}
+                </a>
+                <!-- End : Button - Buy -->
+              @endif
+            </div>
+            <img src="{{ book.image }}" class="book-image card-img-right flex-auto d-none d-lg-block" alt="Book">
+          </div>
+          <!-- End : Card - Book -->
+          @if(sessionId)
+            <!-- Begin : Button - Go Home -->
+            <div class=" text-center pt-3">
+              <a href="{{ route('book.index') }}" class="btn btn-outline-dark">
+                <i class="fa fa-home"></i> Go Home
+              </a>
+            </div>
+            <!-- End : Button - Go Home -->
+          @endif
+        </div>
+      </div>
+    </div>
+    <!-- End : Container -->
+  </body>
+</html>

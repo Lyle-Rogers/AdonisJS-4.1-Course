@@ -11,8 +11,8 @@ class CreateUser {
 
   get messages () {
     return {
-      'required': "I'm sorry, this is a forced complience. You must give us a {{ field }}.",
-      'unique': "Ha... looser. Someone thought of your idea of a {{ field }} before you."
+      'required': `I'm sorry, this is a forced complience. You must give us a {{ field }}.`,
+      'unique': `Ha... looser. Someone thought of your idea of a {{ field }} before you.`
     } 
   }
 

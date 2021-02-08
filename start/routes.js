@@ -38,9 +38,13 @@ Route.group(() => {
   Route.post('/update/:id', 'JobController.update').validator('CreateJob');
 }).prefix('/post-a-job');
 
+Route.get('/shop', 'ShopController.shop').as('book.index')
+Route.get('/pay/success', 'ShopController.paySuccess').as('pay.success')
+Route.get('/pay/error', 'ShopController.payError').as('pay.error')
+Route.get('/download', 'ShopController.download').as('book.download')
 
-
-
+Route.get('/pay/try', 'ShopController.tryPay').as('book.pay')
+Route.get('/pay/checkout', 'ShopController.payCheckout').as('pay.checkout')
 
 
 

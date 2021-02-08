@@ -4,7 +4,6 @@ const Job = use('App/Models/Job')
 
 class JobController {
   async home({view}) {
-
     const jobs = await Job.all();
 
     return view.render('index', { jobs: jobs.toJSON() });
@@ -32,7 +31,7 @@ class JobController {
       return response.redirect('back');
   }
 
-  async delete({ response, session, params}) {
+  async delete({ response, session, params }) {
       const job = await Job.find(params.id);
 
       await job.delete();
