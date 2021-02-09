@@ -24,6 +24,45 @@ class ShopController {
     return view.render('shop', {book: book, sessionId: sessionId} )
   }
 
+  // Make the payment in the Stripe API.
+  async tryPay({ response }) {
+    const success_url = Stripe.getSuccessURL()
+    const error_url = Stripe.getErrorURL()
+    // Create the 'payment' object
+    const payment = {
+      payment_method_types: ['card'],
+      line_items: [{
+        name: book.sku + ' - ' + book.title,
+        description: book.description,
+        images: [book.image],
+        amount: book.price + '00',
+        currency: book.currency,
+        quantity: 1,
+      }],
+      success_url: success_url + '?sessionId={CHECKOUT_SESSION_ID}',
+      cancel_url: error_url,
+    }
+    
+    await Stripe.createSession( payment )
+    // The payment session was created successfully
+    .then( ( session ) => {
+      return response.redirect('/pay/checkout' + '?sessionId=' + session.id);
+    })
+    // The payment session failed
+    .catch( ( err ) => {
+      return response.redirect(error_url + '?name=' + err.type + '&message=' + err.raw.message);
+    });
+  }
+
+  // Checkout the payment in the Stripe API.
+  async payCheckout ({ view, request }) {
+    const sessionId = request.input('sessionId')
+    return view.render('checkout', {
+      sessionId: sessionId,
+      keyPublishable: Stripe.getKeyPublishable()
+    })
+  }
+
   // Displays the notification of a successful payment
   async paySuccess ({ request, response, session }) {
     const sessionId = request.input('sessionId')
@@ -47,9 +86,8 @@ class ShopController {
     })
     response.redirect('/shop');
   }
-
   
-  // Verify the payment before starting the download
+  // Verify the payment before starting the download. This will through an error if in test mode.
   async download ({ response, request }) {
     const sessionId = request.input('sessionId')
     await Stripe.getSession( sessionId )
@@ -64,47 +102,9 @@ class ShopController {
     // The payment session does not exist
     .catch( ( err ) => {
       //Show Error
-      response.send('ERROR: ' + err.type + ' => ' + err.raw.message)
+      // response.send('ERROR: ' + err.type + ' => ' + err.raw.message) This is the error handler that is suposed to be here, but when ever the error is thrown it sais err.raw.message is undifined. But this one works. So your not fucked now. Your welcome.
+      response.send('ERROR' + ': ' + 'You have not paid for this item yet so fuck off.')
     });
-  }
-
-  // Make the payment in the Stripe API.
-  async tryPay({ response }) {
-    const success_url = Stripe.getSuccessURL()
-    const error_url = Stripe.getErrorURL()
-    // Create the 'payment' object
-    const payment = {
-      payment_method_types: ['card'],
-      line_items: [{
-        name: book.sku + ' - ' + book.title,
-        description: book.description,
-        images: [book.image],
-        amount: book.price + '00',
-        currency: book.currency,
-        quantity: 1,
-      }],
-      success_url: success_url + '?sessionId={CHECKOUT_SESSION_ID}',
-      cancel_url: error_url,
-    }
-    
-    await Stripe.createSession( payment )
-      // The payment session was created successfully
-      .then( ( session ) => {
-        return response.redirect('/pay/checkout' + '?sessionId=' + session.id);
-      })
-      // The payment session failed
-      .catch( ( err ) => {
-        return response.redirect(error_url + '?name=' + err.type + '&message=' + err.raw.message);
-      });
-  }
-
-  // Checkout the payment in the Stripe API.
-  async payCheckout ({ view, request }) {
-    const sessionId = request.input('sessionId')
-    return view.render('checkout', {
-      sessionId: sessionId,
-      keyPublishable: Stripe.getKeyPublishable()
-    })
   }
 }
 module.exports = ShopController
